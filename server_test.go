@@ -10,23 +10,23 @@ func TestServer(t *testing.T) {
 	var s = NewHTTPServer()
 
 	s.Get("/usr/detail", func(ctx *Context) {
-		ctx.Resp.Write([]byte("hello,/usr/detail"))
+		ctx.RespData = []byte("hello,/usr/detail")
 	})
 	s.Get("/usr/*", func(ctx *Context) {
-		ctx.Resp.Write([]byte("hello,/usr/*"))
+		ctx.RespData = []byte("hello,/usr/*")
 	})
 	//框架中不支持路由回溯，这种路径不支持。如果浏览器输入http://localhost:8081/usr/home/lis，就会not found
 	s.Get("/usr/*/*", func(ctx *Context) {
-		ctx.Resp.Write([]byte("hello,/usr/*/*"))
+		ctx.RespData = []byte("hello,/usr/*/*")
 	})
 	s.Get("/usr/home/list", func(ctx *Context) {
-		ctx.Resp.Write([]byte("hello,/usr/home/list"))
+		ctx.RespData = []byte("hello,/usr/home/list")
 	})
 	s.Get("/*/detail", func(ctx *Context) {
-		ctx.Resp.Write([]byte("hello,/*/detail"))
+		ctx.RespData = []byte("hello,/*/detail")
 	})
 	s.Get("/usr/detail/:id", func(ctx *Context) {
-		ctx.Resp.Write([]byte(fmt.Sprintf("hello,/usr/detail/:id,id:%s", ctx.PathParams["id"])))
+		ctx.RespData = []byte(fmt.Sprintf("hello,/usr/detail/:id,id:%s", ctx.PathParams["id"]))
 	})
 
 	//因为路径同一个位置不能注册不同的路由参数，此处会panic
@@ -35,11 +35,11 @@ func TestServer(t *testing.T) {
 	})*/
 
 	s.Get("/gm/:id([0-9a-zA-Z]+)", func(ctx *Context) {
-		ctx.Resp.Write([]byte(fmt.Sprintf("hello,%s,id:%s", "/gm/:id([0-9a-zA-Z]+)", ctx.PathParams["id"])))
+		ctx.RespData = []byte(fmt.Sprintf("hello,%s,id:%s", "/gm/:id([0-9a-zA-Z]+)", ctx.PathParams["id"]))
 	})
 
 	s.Post("/form", func(ctx *Context) {
-		ctx.Resp.Write([]byte("hello,form"))
+		ctx.RespData = []byte("hello,form")
 	})
 
 	//启动服务器监听

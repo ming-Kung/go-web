@@ -61,49 +61,49 @@ func Test_router_addRoute(t *testing.T) {
 	wantRouter := &router{
 		trees: map[string]*node{
 			http.MethodGet: &node{
-				partition: "/",
-				handler:   mockHandler,
+				pattern: "/",
+				handler: mockHandler,
 				children: map[string]*node{
 					"user": &node{
-						partition: "user",
+						pattern: "user",
 						children: map[string]*node{
 							"home": &node{
-								partition: "home",
-								handler:   mockHandler,
+								pattern: "home",
+								handler: mockHandler,
 							},
 						},
 						handler: mockHandler,
 					},
 					"order": &node{
-						partition: "order",
+						pattern: "order",
 						children: map[string]*node{
 							"detail": &node{
-								partition: "detail",
-								handler:   mockHandler,
+								pattern: "detail",
+								handler: mockHandler,
 							},
 						},
 						startChild: &node{
-							partition: "*",
-							handler:   mockHandler,
+							pattern: "*",
+							handler: mockHandler,
 						},
 					},
 				},
 			},
 			http.MethodPost: &node{
-				partition: "/",
+				pattern: "/",
 				children: map[string]*node{
 					"order": &node{
-						partition: "order",
+						pattern: "order",
 						children: map[string]*node{
 							"create": &node{
-								partition: "create",
-								handler:   mockHandler,
+								pattern: "create",
+								handler: mockHandler,
 							},
 						},
 					},
 					"login": &node{
-						partition: "login",
-						handler:   mockHandler,
+						pattern: "login",
+						handler: mockHandler,
 					},
 				},
 			},
@@ -156,8 +156,8 @@ func Test_router_findRoute(t *testing.T) {
 			path:      "/",
 			wantFound: true,
 			wantNode: &node{
-				partition: "/",
-				handler:   mockHandler,
+				pattern: "/",
+				handler: mockHandler,
 			},
 		},
 		{
@@ -167,8 +167,8 @@ func Test_router_findRoute(t *testing.T) {
 			path:      "/order/detail",
 			wantFound: true,
 			wantNode: &node{
-				handler:   mockHandler,
-				partition: "detail",
+				handler: mockHandler,
+				pattern: "detail",
 			},
 		},
 	}
@@ -180,7 +180,7 @@ func Test_router_findRoute(t *testing.T) {
 			if !found {
 				return
 			}
-			assert.Equal(t, tc.wantNode.partition, n.partition)
+			assert.Equal(t, tc.wantNode.pattern, n.pattern)
 			assert.Equal(t, tc.wantNode.children, n.children)
 			nHandler := reflect.ValueOf(n.handler)
 			yHandler := reflect.ValueOf(tc.wantNode.handler)
@@ -208,7 +208,7 @@ func (r *router) equal(y *router) (string, bool) {
 }
 
 func (n *node) equal(y *node) (string, bool) {
-	if y.partition != n.partition {
+	if y.pattern != n.pattern {
 		return fmt.Sprintf("节点路径不匹配"), false
 	}
 	if len(y.children) != len(n.children) {
