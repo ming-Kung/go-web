@@ -106,7 +106,7 @@ func (n *node) childOf(seg string) (*node, bool) {
 	return children, true
 }
 
-// parseParam 用于解析是不是正则表达式(要求正则表达式的格式为： :paramName(xxx))
+// parseParam 用于解析是不是正则表达式(要求正则表达式的格式为： :paramName(xxx)，不是该格式则判断为不是正则表达式)
 // 第一个返回值是参数名字
 // 第二个返回值是正则表达式
 // 第三个返回值为true则说明是正则路由
