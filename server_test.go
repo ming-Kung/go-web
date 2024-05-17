@@ -1,7 +1,9 @@
 package web
 
 import (
+	"bytes"
 	"fmt"
+	"html/template"
 	"net/http"
 	"testing"
 )
@@ -40,6 +42,36 @@ func TestServer(t *testing.T) {
 
 	s.Post("/form", func(ctx *Context) {
 		ctx.RespData = []byte("hello,form")
+	})
+
+	s.Get("login", func(ctx *Context) {
+		//页面渲染功能
+		//创建一个模版实例，传入模版名字
+		tpl := template.New("login")
+		//预编译模版，传入的参数是模版的具体内容
+		tpl, err := tpl.Parse(`
+<html>
+	<body>
+		<h1>欢迎登陆，{{.Name}}</h1>
+	</body>
+</html>
+`)
+		if err != nil {
+			t.Fatal(err)
+		}
+		data := struct {
+			Name string
+		}{
+			Name: "Gm",
+		}
+		page := &bytes.Buffer{}
+		//传入数据，渲染模版
+		err = tpl.Execute(page, data)
+		if err != nil {
+			t.Fatal(err)
+		}
+		ctx.RespStatusCode = 200
+		ctx.RespData = page.Bytes()
 	})
 
 	//启动服务器监听

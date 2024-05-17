@@ -22,6 +22,9 @@ type Context struct {
 	//匹配的路由
 	MatchedRoute string
 
+	//模版引擎
+	tplEngine TemplateEngine
+
 	//业务方法的响应状态码与响应数据。这个主要是为了给middleware读写用的
 	RespData       []byte
 	RespStatusCode int
@@ -42,6 +45,17 @@ func (c *Context) RespJSON(code int, val any) error {
 
 func (c *Context) RespJSONOK(val any) error {
 	return c.RespJSON(http.StatusOK, val)
+}
+
+// Render 模版渲染
+func (c *Context) Render(tplName string, data any) error {
+	var err error
+	c.RespData, err = c.tplEngine.Render(c.Req.Context(), tplName, data)
+	if err != nil {
+		c.RespStatusCode = http.StatusInternalServerError
+		return err
+	}
+	return nil
 }
 
 func (c *Context) SetCookie(ck *http.Cookie) {

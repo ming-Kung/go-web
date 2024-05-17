@@ -29,6 +29,9 @@ type HTTPServer struct {
 
 	//log
 	log func(msg string, args ...any)
+
+	//template
+	tplEngine TemplateEngine
 }
 
 func NewHTTPServer(mils ...Middleware) *HTTPServer {
@@ -60,6 +63,7 @@ func (h *HTTPServer) ServeHTTP(writer http.ResponseWriter, request *http.Request
 		Req:        request,
 		Resp:       writer,
 		PathParams: map[string]string{},
+		tplEngine:  h.tplEngine,
 	}
 	//h.Serve(ctx)
 
@@ -85,8 +89,23 @@ func (h *HTTPServer) ServeHTTP(writer http.ResponseWriter, request *http.Request
 
 func (h *HTTPServer) flashResp(ctx *Context) {
 	if ctx.RespStatusCode != 0 {
-		ctx.Resp.WriteHeader(ctx.RespStatusCode)
+		//如果路由没有命中（404），展示渲染not found页面
+		if ctx.RespStatusCode == http.StatusNotFound {
+			if h.tplEngine == nil {
+				engine := &GoTemplateEngine{}
+				engine.ParseGlobal("testdata/tpls/*.gohtml")
+				h.SetTemplateEngine(engine)
+				ctx.tplEngine = h.tplEngine
+			}
+			err := ctx.Render("notfound.gohtml", nil)
+			if err != nil {
+				h.log("渲染页面失败：%v", err)
+			}
+		}
+	} else {
+		ctx.RespStatusCode = http.StatusOK
 	}
+	ctx.Resp.WriteHeader(ctx.RespStatusCode)
 	n, err := ctx.Resp.Write(ctx.RespData)
 	if err != nil || n != len(ctx.RespData) {
 		h.log("响应数据写入失败：%v", err)
@@ -138,4 +157,8 @@ func (h *HTTPServer) Get(path string, handleFunc HandleFunc) {
 }
 func (h *HTTPServer) Post(path string, handleFunc HandleFunc) {
 	h.addRoute(http.MethodPost, path, handleFunc)
+}
+
+func (h *HTTPServer) SetTemplateEngine(engine TemplateEngine) {
+	h.tplEngine = engine
 }
