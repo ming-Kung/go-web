@@ -15,7 +15,7 @@ import (
 	"web"
 )
 
-const instrumentationName = "gongmingming_opentelemetry_trace" //最好用当前项目的仓库名
+const instrumentationName = "https://github.com/ming-Kung/GO-WEB" //最好用当前项目的仓库名
 
 type MiddlewareTraceBuilder struct {
 	tracer trace.Tracer

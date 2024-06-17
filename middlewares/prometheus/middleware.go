@@ -24,6 +24,7 @@ func NewMetricBuilder(namespace, subsystem, name, help string) *MiddlewareMetric
 }
 
 func (b *MiddlewareMetricsBuilder) Build() web.Middleware {
+	//初始化向量实例
 	vector := prometheus.NewSummaryVec(prometheus.SummaryOpts{
 		Namespace: b.Namespace,
 		Subsystem: b.Subsystem,

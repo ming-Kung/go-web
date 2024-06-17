@@ -50,7 +50,7 @@ func (c *Context) RespJSONOK(val any) error {
 // Render 模版渲染
 func (c *Context) Render(tplName string, data any) error {
 	var err error
-	c.RespData, err = c.tplEngine.Render(c.Req.Context(), tplName, data)
+	c.RespData, err = c.tplEngine.Render(tplName, data)
 	if err != nil {
 		c.RespStatusCode = http.StatusInternalServerError
 		return err

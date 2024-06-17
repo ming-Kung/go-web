@@ -3,6 +3,7 @@ package recover
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"web"
 )
 
@@ -14,7 +15,7 @@ type MiddlewareRecoverBuilder struct {
 
 func NewRecoverBuilder() *MiddlewareRecoverBuilder {
 	return &MiddlewareRecoverBuilder{
-		StatusCode: 500,
+		StatusCode: http.StatusInternalServerError,
 		Data:       []byte("你 panic 了"),
 		Log: func(ctx *web.Context, str any) {
 			log.Println(fmt.Sprintf("panic 路径：%s，panic 内容:%v", ctx.Req.URL.String(), str))

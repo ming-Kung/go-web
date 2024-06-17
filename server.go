@@ -48,7 +48,7 @@ func NewHTTPServer(mils ...Middleware) *HTTPServer {
 // 将在整个方法内部完成：context构建、路由匹配、执行业务逻辑
 func (h *HTTPServer) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 	//request.Body最重要的特征就是只能读取一次，无法重复读取。本质上，request.Body是一种接近stream的设计
-	//request.GetBody原则上可以多次读取，但是在原声的http.Request里面，这个是nil。所以有一些Web框架会在收到请求之后，第一件事就是给GetBody赋值
+	//request.GetBody原则上可以多次读取，但是在原生的http.Request里面，这个是nil。所以有一些Web框架会在收到请求之后，第一件事就是给GetBody赋值
 	//在读取到body之后，我们就可以用于反序列化，比如说将json格式的字符串转化为一个对象等
 	//request.URL.Query()
 	//request.GetBody
@@ -93,7 +93,10 @@ func (h *HTTPServer) flashResp(ctx *Context) {
 		if ctx.RespStatusCode == http.StatusNotFound {
 			if h.tplEngine == nil {
 				engine := &GoTemplateEngine{}
-				engine.ParseGlobal("testdata/tpls/*.gohtml")
+				err := engine.ParseGlobal("testdata/tpls/*.gohtml")
+				if err != nil {
+					h.log("渲染页面失败：%v", err)
+				}
 				h.SetTemplateEngine(engine)
 				ctx.tplEngine = h.tplEngine
 			}

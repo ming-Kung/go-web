@@ -1,6 +1,7 @@
 package accesslog
 
 import (
+	"net/http"
 	"testing"
 	"web"
 )
@@ -14,7 +15,7 @@ func TestMiddlewareBuilder(t *testing.T) {
 	mdl := NewAccessLogBuilder().Build()
 	server := web.NewHTTPServer(mdl)
 	server.Get("/a/b/*", func(ctx *web.Context) {
-		ctx.RespStatusCode = 200
+		ctx.RespStatusCode = http.StatusOK
 		ctx.RespData = []byte("hello,it's me")
 	})
 

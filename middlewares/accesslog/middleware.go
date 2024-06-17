@@ -53,9 +53,9 @@ type accessLog struct {
 	//实际路径
 	Path string `json:"path,omitempty"`
 	//响应码
-	RespStatusCode int
+	RespStatusCode int `json:"resp_status_code"`
 	//响应数据
-	RespData string
+	RespData string `json:"resp_data"`
 }
 
 func NewAccessLog(ctx *web.Context) accessLog {
