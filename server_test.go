@@ -76,8 +76,8 @@ func TestServer(t *testing.T) {
 	//启动服务器监听
 	//用法一：完全委托给http包管
 	//这个handler就是我们跟http包的结合点
-	http.ListenAndServe(":8081", s)
-	http.ListenAndServeTLS(":443", "", "", s)
+	//http.ListenAndServe(":8081", s)
+	//http.ListenAndServeTLS(":443", "", "", s)
 
 	//用法二：自己手动管
 	s.Start(":8081")
