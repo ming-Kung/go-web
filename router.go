@@ -36,7 +36,7 @@ type node struct {
 	typ int
 
 	//静态匹配节点
-	children map[string]*node //子 path 到子节点的映射
+	children map[string]*node //子 pattern 到子节点的映射
 
 	//通配符匹配节点
 	startChild *node
